@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("mtc_dotnet")]
-[assembly: AssemblyDescription("MTConnect .NET Adapter SDK")]
+[assembly: AssemblyTitle("MTConnect .NET Adapter SDK")]
+[assembly: AssemblyDescription("A Simple SDK for Developing MTConnect Adapters in .NET C# or VB")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("System Insights")]
-[assembly: AssemblyProduct("dotnet")]
+[assembly: AssemblyProduct("DotNetAdapterSDK")]
 [assembly: AssemblyCopyright("Copyright © System Insights 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

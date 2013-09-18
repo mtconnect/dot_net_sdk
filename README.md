@@ -16,7 +16,7 @@ Hands-on Tutorial:
 
 http://youtu.be/pvz2d3WrsS8
 
-The presetation slides are also included in this repo in Docs subdirectory.
+The presetation slides are also included in this repo in Docs subdirectory. The source for the completed AdapterLab is included in the Sample subdirectory.
 
 Unit Tests
 ----------

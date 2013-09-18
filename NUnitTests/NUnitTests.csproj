@@ -56,9 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dotnet.csproj">
+    <ProjectReference Include="..\DotNetAdapterSDK.csproj">
       <Project>{D8D08DBE-B511-4DE0-B5A9-563EBFC60C4F}</Project>
-      <Name>dotnet</Name>
+      <Name>DotNetAdapterSDK</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

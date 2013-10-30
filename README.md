@@ -16,5 +16,11 @@ Hands-on Tutorial:
 
 http://youtu.be/pvz2d3WrsS8
 
-The presetation slides are also included in this repo in Docs subdirectory.
+The presetation slides are also included in this repo in Docs subdirectory. The source for the completed AdapterLab is included in the Sample subdirectory.
 
+Unit Tests
+----------
+
+This project is provided with unit tests. For more informaiton on NUnit and licensing: http://sourceforge.net/projects/nunit/files/NUnit%20Version%202/
+
+Download and install NUnit 2.6.2 to run the tests.

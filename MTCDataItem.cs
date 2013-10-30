@@ -89,7 +89,7 @@ namespace MTConnect
         /// Checks if the data item is unavailable.
         /// </summary>
         /// <returns>true if Unavailable</returns>
-        public bool IsUnavailable() { return mValue.ToString() == "UNAVAILABLE"; }
+        public bool IsUnavailable() { return mValue.Equal("UNAVAILABLE"); }
 
         /// <summary>
         /// Getter for the mChanged property.

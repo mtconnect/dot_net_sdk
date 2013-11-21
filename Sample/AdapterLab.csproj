@@ -52,7 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetAdapterSDK">
-      <HintPath>..\bin\Debug\DotNetAdapterSDK.dll</HintPath>
+      <HintPath>..\bin\Release\DotNetAdapterSDK.dll</HintPath>
     </Reference>
     <Reference Include="NAudio">
       <HintPath>..\lib\NAudio\NAudio.dll</HintPath>

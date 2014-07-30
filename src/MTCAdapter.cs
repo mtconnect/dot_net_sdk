@@ -202,7 +202,7 @@ namespace MTConnect
         /// Send only the objects that need have changed to the clients.
         /// </summary>
         /// <param name="markAndSweek"></param>
-        public void SendChanged()
+        public void SendChanged(String timestamp = null)
         {
             if (mBegun)
                 foreach (DataItem di in mDataItems) di.Prepare();
@@ -222,8 +222,11 @@ namespace MTConnect
 
             // Compone all the same line data items onto one line.
             string line;
-            DateTime now = DateTime.UtcNow;
-            String timestamp = now.ToString("yyyy-MM-dd\\THH:mm:ss.fffffffK");
+            if (timestamp == null)
+            {
+                DateTime now = DateTime.UtcNow;
+                timestamp = now.ToString("yyyy-MM-dd\\THH:mm:ss.fffffffK");
+            }
             if (together.Count > 0)
             {
                 line = timestamp;

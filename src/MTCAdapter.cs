@@ -528,6 +528,7 @@ namespace MTConnect
                     clientThread.Start(client);
 
                     SendAllTo(client.GetStream());
+                    clientThread.Join();
                 }
             }
             catch (Exception e)
@@ -562,16 +563,16 @@ namespace MTConnect
         {
             if (mRunning) {
                 mRunning = false;
-                mListener.Stop();
+
+                // Wait 2 seconds for the thread to exit.
+                mListenThread.Join(2*Heartbeat);
+
                 foreach (Object obj in mClients)
                 {
                     Stream client = (Stream)obj;
                     client.Close();
                 }
                 mClients.Clear();
-
-                // Wait 5 seconds for the thread to exit.
-                mListenThread.Join(2000);
 
                 // Wait for all client threads to exit.
                 mActiveClients.Wait(2000);

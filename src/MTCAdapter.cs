@@ -28,11 +28,44 @@ namespace MTConnect
     using System.Collections.Generic;
     using System.Xml;
 
+    ///<summary>
+    /// Commands that can be issues to the Adapter
+    /// The Commands.Device must be issued first to set the device (byname or uuid) that will be commanded
+    ///</summary>
+
+    public enum MTConnectDeviceCommand
+    {
+        Manufacturer,
+        Station,
+        SerialNumber,
+        Description,
+        NativeName,
+        Calibration,
+        ConversionRequired, // {yes, no}
+        RelativeTime, // {yes, no}
+        RealTime, // {yes, no}
+        Device
+    }
+
     /// <summary>
     /// An MTConnect adapter
     /// </summary>
     public class Adapter
     {
+
+        private static Dictionary<MTConnectDeviceCommand, string> _commandConverter = new Dictionary<MTConnectDeviceCommand, string>
+        {
+            {MTConnectDeviceCommand.Manufacturer, "manufacturer"},
+            {MTConnectDeviceCommand.Station, "station"},
+            {MTConnectDeviceCommand.SerialNumber, "serialNumber"},
+            {MTConnectDeviceCommand.Description, "description"},
+            {MTConnectDeviceCommand.NativeName, "nativeName"},
+            {MTConnectDeviceCommand.Calibration, "calibration"},
+            {MTConnectDeviceCommand.ConversionRequired, "conversionRequired"},
+            {MTConnectDeviceCommand.RelativeTime, "relativeTime"},
+            {MTConnectDeviceCommand.RealTime, "realTime"},
+            {MTConnectDeviceCommand.Device, "device"}
+        };
         /// <summary>
         /// The listening thread for new connections
         /// </summary>
@@ -196,6 +229,26 @@ namespace MTConnect
         {
             mBegun = true;
             foreach (DataItem di in mDataItems) di.Begin();
+        }
+
+        /// <summary>
+        /// Sends a command to control the properties of a device on the adapter
+        /// </summary>
+        public void SendCommand(MTConnectDeviceCommand command, string value)
+        {
+            string commandLine = $"* {_commandConverter[command]}: {value}\n";
+            byte[] message = mEncoder.GetBytes(commandLine.ToCharArray());
+
+            if (Verbose)
+                Console.WriteLine("Sending: " + commandLine);
+
+            foreach (Stream client in mClients.ToArray())
+            {
+                lock (client)
+                {
+                    WriteToClient(client, message);
+                }
+            }
         }
 
         /// <summary>

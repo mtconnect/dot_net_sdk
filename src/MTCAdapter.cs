@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright Copyright 2012, System Insights, Inc.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,8 @@ namespace MTConnect
         ConversionRequired, // {yes, no}
         RelativeTime, // {yes, no}
         RealTime, // {yes, no}
-        Device
+        Device,
+        UUID
     }
 
     /// <summary>
@@ -55,16 +56,17 @@ namespace MTConnect
 
         private static Dictionary<MTConnectDeviceCommand, string> _commandConverter = new Dictionary<MTConnectDeviceCommand, string>
         {
-            {MTConnectDeviceCommand.Manufacturer, "manufacturer"},
-            {MTConnectDeviceCommand.Station, "station"},
-            {MTConnectDeviceCommand.SerialNumber, "serialNumber"},
-            {MTConnectDeviceCommand.Description, "description"},
-            {MTConnectDeviceCommand.NativeName, "nativeName"},
-            {MTConnectDeviceCommand.Calibration, "calibration"},
-            {MTConnectDeviceCommand.ConversionRequired, "conversionRequired"},
-            {MTConnectDeviceCommand.RelativeTime, "relativeTime"},
-            {MTConnectDeviceCommand.RealTime, "realTime"},
-            {MTConnectDeviceCommand.Device, "device"}
+            { MTConnectDeviceCommand.Manufacturer, "manufacturer" },
+            { MTConnectDeviceCommand.Station, "station" },
+            { MTConnectDeviceCommand.SerialNumber, "serialNumber" },
+            { MTConnectDeviceCommand.Description, "description" },
+            { MTConnectDeviceCommand.NativeName, "nativeName" },
+            { MTConnectDeviceCommand.Calibration, "calibration" },
+            { MTConnectDeviceCommand.ConversionRequired, "conversionRequired" },
+            { MTConnectDeviceCommand.RelativeTime, "relativeTime" },
+            { MTConnectDeviceCommand.RealTime, "realTime" },
+            { MTConnectDeviceCommand.Device, "device" }, 
+            { MTConnectDeviceCommand.UUID, "uuid" }
         };
         /// <summary>
         /// The listening thread for new connections

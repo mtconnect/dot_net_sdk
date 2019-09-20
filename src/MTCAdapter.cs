@@ -53,7 +53,7 @@ namespace MTConnect
     /// </summary>
     public class Adapter
     {
-        private Dictionary<MTConnectDeviceCommand, string> _commandsToSendOnConnect;
+        private IList<Tuple<MTConnectDeviceCommand, string>> _commandsToSendOnConnect;
         private static Dictionary<MTConnectDeviceCommand, string> _commandConverter = new Dictionary<MTConnectDeviceCommand, string>
         {
             { MTConnectDeviceCommand.Manufacturer, "manufacturer" },
@@ -170,7 +170,7 @@ namespace MTConnect
         public Adapter(int aPort = 7878, bool verbose = false)
         {
             mPort = aPort;
-            _commandsToSendOnConnect = new Dictionary<MTConnectDeviceCommand, string>();
+            _commandsToSendOnConnect = new List<Tuple<MTConnectDeviceCommand, string>>
             Heartbeat = 10000;
             Verbose = verbose;
         }
@@ -237,11 +237,11 @@ namespace MTConnect
         /// <summary>
         /// Sends a command to control the properties of a device on the adapter
         /// </summary>
-        public void SendCommand(MTConnectDeviceCommand command, string value, bool sendOnClientConnect = true)
+        public void SendCommand(MTConnectDeviceCommand command, string value, bool sendOnNewClientConnect = true)
         {
-            if (sendOnClientConnect)
+            if (sendOnNewClientConnect)
             {
-                _commandsToSendOnConnect[command] = value;
+                _commandsToSendOnConnect.Add(new Tuple<MTConnectDeviceCommand, string>(command, value));
             }
             string commandLine = $"* {_commandConverter[command]}: {value}\n";
             byte[] message = mEncoder.GetBytes(commandLine.ToCharArray());
@@ -589,9 +589,9 @@ namespace MTConnect
 
                     SendAllTo(client.GetStream());
                     clientThread.Join();
-                    foreach(KeyValuePair<MTConnectDeviceCommand, string> kvp in _commandsToSendOnConnect)
+                    foreach(Tuple<MTConnectDeviceCommand, string> tuple in _commandsToSendOnConnect)
                     {
-                        SendCommand(kvp.Key, kvp.Value, false);
+                        SendCommand(tuple.Item1, tuple.Item2, false);
                     }
                 }
             }

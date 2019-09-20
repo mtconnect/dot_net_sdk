@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright Copyright 2012, System Insights, Inc.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ namespace MTConnect
     /// </summary>
     public class Adapter
     {
-
+        private Dictionary<MTConnectDeviceCommand, string> _commandsToSendOnConnect;
         private static Dictionary<MTConnectDeviceCommand, string> _commandConverter = new Dictionary<MTConnectDeviceCommand, string>
         {
             { MTConnectDeviceCommand.Manufacturer, "manufacturer" },
@@ -170,8 +170,9 @@ namespace MTConnect
         public Adapter(int aPort = 7878, bool verbose = false)
         {
             mPort = aPort;
+            _commandsToSendOnConnect = new Dictionary<MTConnectDeviceCommand, string>();
             Heartbeat = 10000;
-            Verbose = verbose;            
+            Verbose = verbose;
         }
 
         /// <summary>
@@ -236,8 +237,12 @@ namespace MTConnect
         /// <summary>
         /// Sends a command to control the properties of a device on the adapter
         /// </summary>
-        public void SendCommand(MTConnectDeviceCommand command, string value)
+        public void SendCommand(MTConnectDeviceCommand command, string value, bool sendOnClientConnect = true)
         {
+            if (sendOnClientConnect)
+            {
+                _commandsToSendOnConnect[command] = value;
+            }
             string commandLine = $"* {_commandConverter[command]}: {value}\n";
             byte[] message = mEncoder.GetBytes(commandLine.ToCharArray());
 
@@ -576,7 +581,7 @@ namespace MTConnect
                 {
                     //blocks until a client has connected to the server
                     TcpClient client = mListener.AcceptTcpClient();
-
+                    
                     //create a thread to handle communication 
                     //with connected client
                     Thread clientThread = new Thread(new ParameterizedThreadStart(HeartbeatClient));
@@ -584,6 +589,10 @@ namespace MTConnect
 
                     SendAllTo(client.GetStream());
                     clientThread.Join();
+                    foreach(KeyValuePair<MTConnectDeviceCommand, string> kvp in _commandsToSendOnConnect)
+                    {
+                        SendCommand(kvp.Key, kvp.Value, false);
+                    }
                 }
             }
             catch (Exception e)

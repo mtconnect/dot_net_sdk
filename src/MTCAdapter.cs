@@ -170,7 +170,7 @@ namespace MTConnect
         public Adapter(int aPort = 7878, bool verbose = false)
         {
             mPort = aPort;
-            _commandsToSendOnConnect = new List<Tuple<MTConnectDeviceCommand, string>>
+            _commandsToSendOnConnect = new List<Tuple<MTConnectDeviceCommand, string>>();
             Heartbeat = 10000;
             Verbose = verbose;
         }

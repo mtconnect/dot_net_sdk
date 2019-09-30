@@ -588,11 +588,11 @@ namespace MTConnect
                     clientThread.Start(client);
 
                     SendAllTo(client.GetStream());
-                    clientThread.Join();
                     foreach(Tuple<MTConnectDeviceCommand, string> tuple in _commandsToSendOnConnect)
                     {
                         SendCommand(tuple.Item1, tuple.Item2, false);
                     }
+                    clientThread.Join();
                 }
             }
             catch (Exception e)

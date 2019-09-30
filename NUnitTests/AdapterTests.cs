@@ -16,16 +16,12 @@
 
 using System;
 using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Net.Sockets;
 using System.IO;
-using NUnit.Framework.Constraints;
+using MTConnect;
 
 namespace NUnit.AdapterLabTests
 {
-    using MTConnect;
     using NUnit.Framework;
 
     [TestFixture]

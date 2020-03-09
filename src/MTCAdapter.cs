@@ -519,16 +519,20 @@ namespace MTConnect
             {
                 while (mRunning)
                 {
-                    //blocks until a client has connected to the server
-                    TcpClient client = mListener.AcceptTcpClient();
+                    //loop until there aren't pending clients
+                    if (mListener.Pending())
+                    {
+                        //get the pending client
+                        TcpClient client = mListener.AcceptTcpClient();
 
-                    //create a thread to handle communication 
-                    //with connected client
-                    Thread clientThread = new Thread(new ParameterizedThreadStart(HeartbeatClient));
-                    clientThread.Start(client);
+                        //create a thread to handle communication 
+                        //with connected client
+                        Thread clientThread = new Thread(new ParameterizedThreadStart(HeartbeatClient));
+                        clientThread.Start(client);
 
-                    SendAllTo(client.GetStream());
-                    clientThread.Join();
+                        SendAllTo(client.GetStream());
+                        clientThread.Join();
+                    }
                 }
             }
             catch (Exception e)

@@ -22,70 +22,92 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MTConnect;
 
 namespace AdapterLab
 {
-    using MTConnect;
+     public partial class CuttingToolForm : Form
+     {
+          private readonly Adapter mAdapter;
 
-    public partial class CuttingToolForm : Form
-    {
-        Adapter mAdapter;
+          public CuttingToolForm(Adapter adapter)
+          {
+               InitializeComponent();
+               mAdapter = adapter;
+          }
 
-        public CuttingToolForm(Adapter adapter)
-        {
-            InitializeComponent();
-            mAdapter = adapter;
-        }
+          private void Button1_Click(object sender, EventArgs e)
+          {
+               CuttingTool tool = new CuttingTool(assetId.Text, toolId.Text, serialNumber.Text)
+               {
+                    Description = description.Text,
+                    Manufacturers = manufacturers.Text
+               };
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            CuttingTool tool = new CuttingTool(assetId.Text, toolId.Text, serialNumber.Text);
-            tool.Description = description.Text;
-            tool.Manufacturers = manufacturers.Text;
+               List<string> status = new List<string>();
+               if (statusUsed.Checked)
+               {
+                    status.Add("USED");
+               }
 
-            List<string> status = new List<string>();
-            if (statusUsed.Checked)
-                status.Add("USED");
-            if (statusNew.Checked)
-                status.Add("NEW");
-            if (statusAllocated.Checked)
-                status.Add("ALLOCATED");
-            if (statusMeasured.Checked)
-                status.Add("MEASURED");
-            if (statusBroken.Checked)
-                status.Add("BROKEN");
-            tool.AddStatus(status.ToArray());
+               if (statusNew.Checked)
+               {
+                    status.Add("NEW");
+               }
 
-            MTConnect.CuttingTool.LifeType type = MTConnect.CuttingTool.LifeType.MINUTES;
-            if (lifeType.Text == "PART_COUNT")
-                type = MTConnect.CuttingTool.LifeType.PART_COUNT;
-            else if (lifeType.Text == "WEAR")
-                type = MTConnect.CuttingTool.LifeType.WEAR;
+               if (statusAllocated.Checked)
+               {
+                    status.Add("ALLOCATED");
+               }
 
-            MTConnect.CuttingTool.Direction dir = MTConnect.CuttingTool.Direction.UP;
-            if (lifeDirection.Text == "DOWN")
-                dir = MTConnect.CuttingTool.Direction.DOWN;
+               if (statusMeasured.Checked)
+               {
+                    status.Add("MEASURED");
+               }
 
-            tool.AddLife(type, dir, lifeValue.Text, lifeInitial.Text, lifeLimit.Text);
+               if (statusBroken.Checked)
+               {
+                    status.Add("BROKEN");
+               }
 
-            tool.AddProperty("ProcessSpindleSpeed", new string[] 
-                 { "nominal", speedNominal.Text,
+               _ = tool.AddStatus(status.ToArray());
+
+               MTConnect.CuttingTool.LifeType type = MTConnect.CuttingTool.LifeType.MINUTES;
+               if (lifeType.Text == "PART_COUNT")
+               {
+                    type = MTConnect.CuttingTool.LifeType.PART_COUNT;
+               }
+               else if (lifeType.Text == "WEAR")
+               {
+                    type = MTConnect.CuttingTool.LifeType.WEAR;
+               }
+
+               MTConnect.CuttingTool.Direction dir = MTConnect.CuttingTool.Direction.UP;
+               if (lifeDirection.Text == "DOWN")
+               {
+                    dir = MTConnect.CuttingTool.Direction.DOWN;
+               }
+
+               _ = tool.AddLife(type, dir, lifeValue.Text, lifeInitial.Text, lifeLimit.Text);
+
+               _ = tool.AddProperty("ProcessSpindleSpeed", new string[]
+                    { "nominal", speedNominal.Text,
                    "minimum", speedMin.Text,
                    "maximum", speedMax.Text}, speed.Text);
 
-            tool.AddMeasurement("FunctionalLength", "LF", Double.Parse(lengthVal.Text), Double.Parse(lengthNom.Text),
-                Double.Parse(lengthMin.Text), Double.Parse(lengthMax.Text));
-            tool.AddMeasurement("CuttingDiameterMax", "DC", Double.Parse(diaVal.Text), Double.Parse(diaNom.Text),
-                Double.Parse(diaMin.Text), Double.Parse(diaMax.Text));
+               _ = tool.AddMeasurement("FunctionalLength", "LF", double.Parse(lengthVal.Text), double.Parse(lengthNom.Text),
+                   double.Parse(lengthMin.Text), double.Parse(lengthMax.Text));
+               _ = tool.AddMeasurement("CuttingDiameterMax", "DC", double.Parse(diaVal.Text), double.Parse(diaNom.Text),
+                   double.Parse(diaMin.Text), double.Parse(diaMax.Text));
 
-            mAdapter.AddAsset(tool);
+               mAdapter.AddAsset(tool);
 
-            this.Close();
-        }
+               this.Close();
+          }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-    }
+          private void Button2_Click(object sender, EventArgs e)
+          {
+               this.Close();
+          }
+     }
 }

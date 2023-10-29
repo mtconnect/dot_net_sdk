@@ -15,207 +15,236 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace AdapterLab
 {
-    using MTConnect;
-    using NAudio;
-    using NAudio.Wave;
+     using MTConnect;
+     using NAudio.Wave;
 
-    public partial class MachineTool : Form
-    {
-        Adapter mAdapter = new Adapter();
-        Event mAvail = new Event("avail");
-        Event mEStop = new Event("estop");
+     public partial class MachineTool : Form
+     {
+          readonly Adapter mAdapter = new Adapter();
+          readonly Event mAvail = new Event("avail");
+          readonly Event mEStop = new Event("estop");
 
-        Event mMode = new Event("mode");
-        Event mExec = new Event("exec");
+          readonly Event mMode = new Event("mode");
+          readonly Event mExec = new Event("exec");
 
-        Event mProgram = new Event("program");
-        Message mMessage = new Message("message");
+          readonly Event mProgram = new Event("program");
+          readonly Message mMessage = new Message("message");
 
-        Sample mPosition = new Sample("position");
-        Sample mLoad = new Sample("load");
+          readonly Sample mPosition = new Sample("position");
+          readonly Sample mLoad = new Sample("load");
 
-        Condition mSystem = new Condition("system");
-        Condition mTemp = new Condition("temp");
-        Condition mOverload = new Condition("overload");
-        Condition mTravel = new Condition("travel");
-        Condition mFillLevel = new Condition("cool_low", true);
+          readonly Condition mSystem = new Condition("system");
+          readonly Condition mTemp = new Condition("temp");
+          readonly Condition mOverload = new Condition("overload");
+          readonly Condition mTravel = new Condition("travel");
+          readonly Condition mFillLevel = new Condition("cool_low", true);
 
-        TimeSeries mAudio = new TimeSeries("audio", 1000);
-        WaveIn mWave;
-        
-        public MachineTool()
-        {
-            InitializeComponent();
-            stop.Enabled = false;
+          readonly TimeSeries mAudio = new TimeSeries("audio", 1000);
+          readonly WaveIn mWave;
 
-            mAdapter.AddDataItem(mAvail);
-            mAvail.Value = "AVAILABLE";
+          public MachineTool()
+          {
+               InitializeComponent();
+               stop.Enabled = false;
 
-            mAdapter.AddDataItem(mEStop);
+               mAdapter.AddDataItem(mAvail);
+               mAvail.Value = "AVAILABLE";
 
-            mAdapter.AddDataItem(mMode);
-            mAdapter.AddDataItem(mExec);
+               mAdapter.AddDataItem(mEStop);
 
-            mAdapter.AddDataItem(mProgram);
-            mAdapter.AddDataItem(mMessage);
+               mAdapter.AddDataItem(mMode);
+               mAdapter.AddDataItem(mExec);
 
-            mAdapter.AddDataItem(mPosition);
-            mAdapter.AddDataItem(mLoad);
+               mAdapter.AddDataItem(mProgram);
+               mAdapter.AddDataItem(mMessage);
 
-            mAdapter.AddDataItem(mSystem);
-            mAdapter.AddDataItem(mTemp);
-            mAdapter.AddDataItem(mOverload);
-            mAdapter.AddDataItem(mTravel);
-            mAdapter.AddDataItem(mFillLevel);
+               mAdapter.AddDataItem(mPosition);
+               mAdapter.AddDataItem(mLoad);
 
-            mAdapter.AddDataItem(mAudio);
+               mAdapter.AddDataItem(mSystem);
+               mAdapter.AddDataItem(mTemp);
+               mAdapter.AddDataItem(mOverload);
+               mAdapter.AddDataItem(mTravel);
+               mAdapter.AddDataItem(mFillLevel);
 
-            int count = WaveIn.DeviceCount;
-            for (int dev = 0; dev < count; dev++)
-            {
-                WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(dev);
-                Console.WriteLine("Device {0}: {1}, {2} channels",
-                    dev, deviceInfo.ProductName, deviceInfo.Channels);
-            }
+               mAdapter.AddDataItem(mAudio);
 
-            mWave = new WaveIn();
-            mWave.DeviceNumber = 0;
-            mWave.WaveFormat = new WaveFormat(1000, 1);
-            mWave.DataAvailable += waveIn_DataAvailable;
-        }
+               int count = WaveIn.DeviceCount;
+               for (int dev = 0; dev < count; dev++)
+               {
+                    WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(dev);
+                    Console.WriteLine("Device {0}: {1}, {2} channels",
+                        dev, deviceInfo.ProductName, deviceInfo.Channels);
+               }
 
-        private void start_Click(object sender, EventArgs e)
-        {
-            // Start the adapter lib with the port number in the text box
-            mAdapter.Port = Convert.ToInt32(port.Text);
-            mAdapter.Start();
+               mWave = new WaveIn
+               {
+                    DeviceNumber = 0,
+                    WaveFormat = new WaveFormat(1000, 1)
+               };
+               mWave.DataAvailable += WaveIn_DataAvailable;
+          }
 
-            // Disable start and enable stop.
-            start.Enabled = false;
-            stop.Enabled = true;
+          private void Start_Click(object sender, EventArgs e)
+          {
+               // Start the adapter lib with the port number in the text box
+               mAdapter.Port = Convert.ToInt32(port.Text);
+               mAdapter.Start();
 
-            // Start our periodic timer
-            gather.Interval = 1000;
-            gather.Enabled = true;
+               // Disable start and enable stop.
+               start.Enabled = false;
+               stop.Enabled = true;
 
-            mSystem.Normal();
-            mTemp.Normal();
-            mOverload.Normal();
-            mTravel.Normal();
-            mFillLevel.Normal();
+               // Start our periodic timer
+               gather.Interval = 1000;
+               gather.Enabled = true;
 
-            mWave.StartRecording();
-        }
+               _ = mSystem.Normal();
+               _ = mTemp.Normal();
+               _ = mOverload.Normal();
+               _ = mTravel.Normal();
+               _ = mFillLevel.Normal();
 
-        private void stop_Click(object sender, EventArgs e)
-        {
-            // Stop everything...
-            mAdapter.Stop();
-            stop.Enabled = false;
-            start.Enabled = true;
-            gather.Enabled = false;
+               mWave.StartRecording();
+          }
 
-            mWave.StopRecording();
-        }
+          private void Stop_Click(object sender, EventArgs e)
+          {
+               // Stop everything...
+               mAdapter.Stop();
+               stop.Enabled = false;
+               start.Enabled = true;
+               gather.Enabled = false;
 
-        private void gather_Tick(object sender, EventArgs e)
-        {
-            mAdapter.Begin();
+               mWave.StopRecording();
+          }
 
-            if (estop.Checked)
-                mEStop.Value = "TRIGGERED";
-            else
-                mEStop.Value = "ARMED";
+          private void Gather_Tick(object sender, EventArgs e)
+          {
+               mAdapter.Begin();
 
-            if (automatic.Checked)
-                mMode.Value = "AUTOMATIC";
-            else if (mdi.Checked)
-                mMode.Value = "MANUAL_DATA_INPUT";
-            else // edit & manual
-                mMode.Value = "MANUAL";
+               if (estop.Checked)
+               {
+                    mEStop.Value = "TRIGGERED";
+               }
+               else
+               {
+                    mEStop.Value = "ARMED";
+               }
 
-            if (running.Checked)
-                mExec.Value = "ACTIVE";
-            else if (feedhold.Checked)
-                mExec.Value = "FEED_HOLD";
-            else
-                mExec.Value = "READY";
+               if (automatic.Checked)
+               {
+                    mMode.Value = "AUTOMATIC";
+               }
+               else if (mdi.Checked)
+               {
+                    mMode.Value = "MANUAL_DATA_INPUT";
+               }
+               else // edit & manual
+               {
+                    mMode.Value = "MANUAL";
+               }
 
-            mProgram.Value = program.Text;
+               if (running.Checked)
+               {
+                    mExec.Value = "ACTIVE";
+               }
+               else if (feedhold.Checked)
+               {
+                    mExec.Value = "FEED_HOLD";
+               }
+               else
+               {
+                    mExec.Value = "READY";
+               }
 
-            if (messageCode.Text.Length > 0)
-            {
-                mMessage.Code = messageCode.Text;
-                mMessage.Value = messageText.Text;
-            }
+               mProgram.Value = program.Text;
 
-            mLoad.Value = load.Value;
-            mPosition.Value = position.Value;
+               if (messageCode.Text.Length > 0)
+               {
+                    mMessage.Code = messageCode.Text;
+                    mMessage.Value = messageText.Text;
+               }
 
-            if (flazBat.Checked)
-                mSystem.Add(Condition.Level.FAULT, "Yur Flaz Bat is flapping", "FLAZBAT");
-            if (something.Checked)
-                mSystem.Add(Condition.Level.WARNING, "Something went wrong", "AKAK");
+               mLoad.Value = load.Value;
+               mPosition.Value = position.Value;
 
-            if (overtemp.Checked)
-                mTemp.Add(Condition.Level.WARNING, "Temperature is too high", "OT");
-            if (overload.Checked)
-                mOverload.Add(Condition.Level.FAULT, "Axis overload", "OL");
-            if (travel.Checked)
-                mTravel.Add(Condition.Level.FAULT, "Travel outside boundaries", "OP");
+               if (flazBat.Checked)
+               {
+                    _ = mSystem.Add(Condition.Level.FAULT, "Yur Flaz Bat is flapping", "FLAZBAT");
+               }
 
-            mAdapter.SendChanged();
-        }
+               if (something.Checked)
+               {
+                    _ = mSystem.Add(Condition.Level.WARNING, "Something went wrong", "AKAK");
+               }
 
-        private void load_Scroll(object sender, ScrollEventArgs e)
-        {
-            loadValue.Text = load.Value.ToString();
-        }
+               if (overtemp.Checked)
+               {
+                    _ = mTemp.Add(Condition.Level.WARNING, "Temperature is too high", "OT");
+               }
 
-        private void position_Scroll(object sender, ScrollEventArgs e)
-        {
-            mPosition.Value = position.Value;
-            mAdapter.SendChanged();
+               if (overload.Checked)
+               {
+                    _ = mOverload.Add(Condition.Level.FAULT, "Axis overload", "OL");
+               }
 
-            positionValue.Text = position.Value.ToString();
-        }
+               if (travel.Checked)
+               {
+                    _ = mTravel.Add(Condition.Level.FAULT, "Travel outside boundaries", "OP");
+               }
 
-        private void coolant_CheckedChanged(object sender, EventArgs e)
-        {
-            if (coolant.Checked)
-                mFillLevel.Add(Condition.Level.WARNING, "Coolant Low", "COOL", "LOW");
-            else
-                mFillLevel.Clear("COOL");
-            mAdapter.SendChanged();
-        }
+               mAdapter.SendChanged();
+          }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            CuttingToolForm toolWindow = new CuttingToolForm(mAdapter);
-            toolWindow.Show(this);
-        }
+          private void Load_Scroll(object sender, ScrollEventArgs e)
+          {
+               loadValue.Text = load.Value.ToString();
+          }
 
-        void waveIn_DataAvailable(object sender, WaveInEventArgs e)
-        {
-            double[] samples = new double[e.BytesRecorded / 2];
-            for (int i = 0; i < e.BytesRecorded; i += 2)
-            {
-                short sample = (short)((e.Buffer[i + 1] << 8) |
-                                e.Buffer[i]);
-                samples[i / 2] = sample / 32768.0;
-            }
-            mAudio.Values = samples;
-            mAdapter.SendChanged();
-        }
+          private void Position_Scroll(object sender, ScrollEventArgs e)
+          {
+               mPosition.Value = position.Value;
+               mAdapter.SendChanged();
+
+               positionValue.Text = position.Value.ToString();
+          }
+
+          private void Coolant_CheckedChanged(object sender, EventArgs e)
+          {
+               if (coolant.Checked)
+               {
+                    _ = mFillLevel.Add(Condition.Level.WARNING, "Coolant Low", "COOL", "LOW");
+               }
+               else
+               {
+                    _ = mFillLevel.Clear("COOL");
+               }
+
+               mAdapter.SendChanged();
+          }
+
+          private void Button1_Click(object sender, EventArgs e)
+          {
+               CuttingToolForm toolWindow = new CuttingToolForm(mAdapter);
+               toolWindow.Show(this);
+          }
+
+          void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
+          {
+               double[] samples = new double[e.BytesRecorded / 2];
+               for (int i = 0; i < e.BytesRecorded; i += 2)
+               {
+                    short sample = (short)((e.Buffer[i + 1] << 8) |
+                                    e.Buffer[i]);
+                    samples[i / 2] = sample / 32768.0;
+               }
+               mAudio.Values = samples;
+               mAdapter.SendChanged();
+          }
      }
 }

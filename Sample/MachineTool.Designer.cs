@@ -99,7 +99,7 @@
             this.stop.TabIndex = 3;
             this.stop.Text = "Stop";
             this.stop.UseVisualStyleBackColor = true;
-            this.stop.Click += new System.EventHandler(this.stop_Click);
+            this.stop.Click += new System.EventHandler(this.Stop_Click);
             // 
             // start
             // 
@@ -109,7 +109,7 @@
             this.start.TabIndex = 2;
             this.start.Text = "Start";
             this.start.UseVisualStyleBackColor = true;
-            this.start.Click += new System.EventHandler(this.start_Click);
+            this.start.Click += new System.EventHandler(this.Start_Click);
             // 
             // port
             // 
@@ -300,7 +300,7 @@
             this.position.Name = "position";
             this.position.Size = new System.Drawing.Size(168, 18);
             this.position.TabIndex = 23;
-            this.position.Scroll += new System.Windows.Forms.ScrollEventHandler(this.position_Scroll);
+            this.position.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Position_Scroll);
             // 
             // label4
             // 
@@ -325,7 +325,7 @@
             this.load.Name = "load";
             this.load.Size = new System.Drawing.Size(168, 18);
             this.load.TabIndex = 20;
-            this.load.Scroll += new System.Windows.Forms.ScrollEventHandler(this.load_Scroll);
+            this.load.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Load_Scroll);
             // 
             // groupBox3
             // 
@@ -392,7 +392,7 @@
             this.coolant.TabIndex = 2;
             this.coolant.Text = "Coolant Low";
             this.coolant.UseVisualStyleBackColor = true;
-            this.coolant.CheckedChanged += new System.EventHandler(this.coolant_CheckedChanged);
+            this.coolant.CheckedChanged += new System.EventHandler(this.Coolant_CheckedChanged);
             // 
             // noProgram
             // 
@@ -416,7 +416,7 @@
             // 
             // gather
             // 
-            this.gather.Tick += new System.EventHandler(this.gather_Tick);
+            this.gather.Tick += new System.EventHandler(this.Gather_Tick);
             // 
             // button1
             // 
@@ -426,7 +426,7 @@
             this.button1.TabIndex = 15;
             this.button1.Text = "Add Tool";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // label6
             // 
